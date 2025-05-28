@@ -49,7 +49,7 @@ The AI Vision & Audio Processing System is designed for real-time image analysis
 ### Environment Setup
 
 ```bash 
-git clone https://github.com/your-organization/ai-vision-audio.git
+git clone (https://github.com/ranemori/ImageAudio.git)
 cd ai-vision-audio
  
 python -m venv venv
