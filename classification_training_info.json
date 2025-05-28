@@ -1,0 +1,16 @@
+{
+  "model_type": "classification",
+  "classes": [
+    "background",
+    "cat",
+    "dog",
+    "man",
+    "woman",
+    "rat"
+  ],
+  "num_epochs": 25,
+  "batch_size": 16,
+  "learning_rate": 0.001,
+  "device": "cpu",
+  "best_metric": "accuracy"
+}

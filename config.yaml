@@ -1,0 +1,347 @@
+# AI Vision & Audio Processing System Configuration
+# Version: 1.0.0
+# Description: Comprehensive configuration for image classification, segmentation, and audio generation
+
+# Application Settings
+app:
+  name: "AI Vision & Audio Processing System"
+  version: "1.0.0"
+  description: "Image classification and segmentation with automated audio generation"
+  debug_mode: false
+  log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  
+# Streamlit Configuration
+streamlit:
+  page_title: "IA Vision & Audio"
+  page_icon: "icon.png"
+  layout: "wide"
+  initial_sidebar_state: "expanded"
+  theme:
+    primary_color: "#FF4B4B"
+    background_color: "#FFFFFF"
+    secondary_background_color: "#F0F2F6"
+    text_color: "#262730"
+
+# Device and Performance Settings
+device:
+  # Automatically detect best available device: "auto", "cpu", "cuda", "mps"
+  type: "auto"
+  # Force specific device if needed: "cpu", "cuda:0", "cuda:1", etc.
+  force_device: null
+  # Enable mixed precision for faster inference (GPU only)
+  mixed_precision: true
+  # Number of worker threads for data loading
+  num_workers: 4
+
+# Model Configuration
+models:
+  # Classification Model Settings
+  classification:
+    model_path: "mobilenet_finetuned.pth"
+    architecture: "mobilenet_v2"
+    input_size: [224, 224]
+    num_classes: 5
+    classes: ["cat", "dog", "man", "woman", "rat"]
+    confidence_threshold: 0.5
+    # Preprocessing settings
+    preprocessing:
+      normalize_mean: [0.485, 0.456, 0.406]
+      normalize_std: [0.229, 0.224, 0.225]
+      resize_mode: "bilinear"  # bilinear, nearest, bicubic
+    
+  # Segmentation Model Settings  
+  segmentation:
+    model_path: "segmentation_model.pth"
+    architecture: "deeplabv3_mobilenet_v3_large"
+    input_size: [512, 512]
+    num_classes: 6  # 5 object classes + background
+    classes: ["background", "cat", "dog", "man", "woman", "rat"]
+    confidence_threshold: 0.7
+    # Post-processing settings
+    postprocessing:
+      morphology_kernel_size: 5
+      min_object_area: 500
+      area_threshold_ratio: 0.001  # Minimum area as ratio of total image
+      keep_dominant_only: true
+      dominant_score_threshold: 0.05
+    # Visualization settings
+    visualization:
+      mask_alpha: 0.5
+      contour_thickness: 2
+      apply_gaussian_blur: true
+      blur_kernel_size: 3
+      enhance_brightness: 1.2
+
+# Class Color Mapping for Segmentation
+segmentation_colors:
+  background: [0, 0, 0]
+  cat: [255, 0, 0]      # Red
+  dog: [0, 255, 0]      # Green  
+  man: [0, 0, 255]      # Blue
+  woman: [255, 255, 0]  # Yellow
+  rat: [255, 0, 255]    # Magenta
+
+# Audio Configuration
+audio:
+  # Text-to-Speech Settings
+  tts:
+    engine: "gtts"  # Google Text-to-Speech
+    language: "en"
+    voice_selection:
+      man: "com"     # TLD for male voice
+      woman: "co.uk" # TLD for female voice
+      default: null  # Use default voice
+    # Audio quality settings
+    quality:
+      format: "mp3"
+      sample_rate: 22050
+      bitrate: 128
+  
+  # Sound Effects Configuration
+  sounds:
+    directory: "sounds"
+    # Sound file mappings
+    files:
+      cat: "cat_meow.mp3"
+      dog: "dog_bark.mp3"
+      rat: "rat_squeak.mp3"
+      man: "man_hello.mp3"
+      woman: "woman_hello.mp3"
+    # Volume and playback settings
+    playback:
+      max_duration: 30  # Maximum audio length in seconds
+      fade_in: 0.1      # Fade in duration in seconds
+      fade_out: 0.1     # Fade out duration in seconds
+
+# Dataset Configuration
+dataset:
+  base_directory: "dataset"
+  structure:
+    train:
+      images: "train/images"
+      masks: "train/masks"
+      annotations: "train/annotations/train_annotations.json"
+    validation:
+      images: "val/images"
+      masks: "val/masks"
+      annotations: "val/annotations/val_annotations.json"
+  # Supported image formats
+  supported_formats: [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
+  # Maximum file size in MB
+  max_file_size: 10
+
+# Training Configuration
+training:
+  # General training settings
+  batch_size: 16
+  num_epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  momentum: 0.9
+  
+  # Classification training specific
+  classification:
+    batch_size: 16
+    optimizer: "adam"  # adam, sgd, adamw
+    scheduler: "cosine"  # cosine, step, exponential
+    early_stopping:
+      enabled: true
+      patience: 10
+      min_delta: 0.001
+    data_augmentation:
+      horizontal_flip: 0.5
+      vertical_flip: 0.2
+      rotation: 15
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+  
+  # Segmentation training specific
+  segmentation:
+    batch_size: 8
+    optimizer: "adam"
+    scheduler: "cosine"
+    loss_function: "cross_entropy"  # cross_entropy, focal_loss, dice_loss
+    class_weights: null  # Auto-compute or specify: [1.0, 2.0, 1.5, ...]
+    early_stopping:
+      enabled: true
+      patience: 15
+      min_delta: 0.001
+
+# Image Processing Settings
+image_processing:
+  # Input validation
+  validation:
+    min_width: 32
+    min_height: 32
+    max_width: 4096
+    max_height: 4096
+    check_corruption: true
+  
+  # Preprocessing pipeline
+  preprocessing:
+    auto_orient: true
+    convert_mode: "RGB"
+    quality_check: true
+    
+  # Post-processing options
+  postprocessing:
+    save_intermediate_results: false
+    output_format: "PNG"
+    compression_quality: 95
+
+# Performance and Optimization
+performance:
+  # Memory management
+  memory:
+    max_cache_size: 1000  # Maximum cached items
+    clear_cache_interval: 100  # Clear cache every N predictions
+    garbage_collection: true
+  
+  # Inference optimization
+  inference:
+    batch_processing: false
+    torch_compile: false  # Enable PyTorch 2.0 compilation (experimental)
+    tensorrt_optimization: false  # TensorRT optimization (NVIDIA GPUs)
+    
+  # Concurrent processing
+  concurrency:
+    max_concurrent_requests: 4
+    thread_pool_size: 8
+
+# Security and Validation
+security:
+  # File upload restrictions
+  upload:
+    max_file_size_mb: 10
+    allowed_extensions: [".png", ".jpg", ".jpeg"]
+    scan_for_malware: false
+    
+  # Input sanitization
+  sanitization:
+    filename_sanitization: true
+    path_traversal_protection: true
+
+# Logging Configuration
+logging:
+  # Log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  # Log file settings
+  file:
+    enabled: true
+    filename: "logs/app.log"
+    max_size: "10MB"
+    backup_count: 5
+    rotation: "time"  # size, time
+  # Console logging
+  console:
+    enabled: true
+    colored_output: true
+
+# Error Handling
+error_handling:
+  # Graceful degradation settings
+  fallback_to_pretrained: true
+  continue_on_model_error: true
+  max_retry_attempts: 3
+  retry_delay: 1.0  # seconds
+  
+  # Error reporting
+  detailed_error_messages: false
+  log_stack_traces: true
+
+# User Interface Configuration
+ui:
+  # Display settings
+  display:
+    show_confidence_scores: true
+    show_processing_time: true
+    show_model_info: false
+    max_image_display_width: 800
+    
+  # Interactive elements
+  interaction:
+    auto_process_on_upload: false
+    confirm_before_processing: false
+    enable_batch_processing: false
+    
+  # Accessibility
+  accessibility:
+    high_contrast_mode: false
+    large_text_mode: false
+    keyboard_navigation: true
+
+# API Configuration (if applicable)
+api:
+  enabled: false
+  host: "0.0.0.0"
+  port: 8000
+  cors:
+    enabled: true
+    origins: ["*"]
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+  authentication:
+    enabled: false
+    api_key_required: false
+
+# Monitoring and Analytics
+monitoring:
+  # Performance metrics
+  metrics:
+    enabled: true
+    track_inference_time: true
+    track_memory_usage: true
+    track_user_interactions: false
+    
+  # Health checks
+  health_checks:
+    enabled: true
+    check_interval: 300  # seconds
+    endpoints: ["models", "audio", "storage"]
+
+# Development and Testing
+development:
+  # Debug features
+  debug:
+    save_intermediate_outputs: false
+    verbose_logging: false
+    profile_performance: false
+    
+  # Testing configuration
+  testing:
+    test_data_directory: "test_data"
+    benchmark_mode: false
+    automated_testing: false
+
+# Backup and Recovery
+backup:
+  # Model backups
+  models:
+    enabled: true
+    backup_directory: "backups/models"
+    keep_n_versions: 5
+    
+  # Configuration backups
+  config:
+    enabled: true
+    backup_directory: "backups/config"
+    auto_backup_on_change: true
+
+# External Services Integration
+external_services:
+  # Cloud storage (optional)
+  cloud_storage:
+    enabled: false
+    provider: null  # aws_s3, gcp_storage, azure_blob
+    bucket_name: null
+    credentials_file: null
+    
+  # External APIs
+  apis:
+    enabled: false
+    timeout: 30   
+    max_retries: 3

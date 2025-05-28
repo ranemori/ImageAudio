@@ -1,0 +1,22 @@
+#Streamlit and user interface
+streamlit>=1.28.0
+
+#Vision and image processing
+Pillow>=9.0.0
+opencv-python>=4.8.0.74
+
+#Machine Learning and PyTorch
+torch>=2.0.0
+torchvision>=0.15.0
+
+#Scientific computing
+numpy>=1.24.0
+
+#Audio and speech synthesis
+gTTS>=2.3.0
+
+#Other
+matplotlib==3.7.1
+scikit-learn==1.2.2
+pycocotools==2.0.6
+tqdm==4.65.0
